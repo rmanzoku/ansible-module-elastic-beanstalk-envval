@@ -49,8 +49,6 @@ def main():
     environment = module.params['environment']
     desired_envval = module.params['envval']
 
-    changed = False
-
     if not HAS_BOTO3:
         module.fail_json(msg='boto3 required for this module')
     if not HAS_BOTOCORE:
@@ -87,30 +85,32 @@ def main():
     # Update envval
     option_settings = [
         {
-            "Namespace": "aws:elasticbeanstalk:application:environment" ,
+            "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": x,
             "Value": desired_envval[x]
         }
         for x in desired_envval.keys()
     ]
 
-    # varidate
-    try:
-        res = conn.validate_configuration_settings(
-            ApplicationName=application,
-            EnvironmentName=environment,
-            OptionSettings=option_settings
-        )
+    options_to_remove = None
+    revoke_envval = list(set(current_envval.keys()) - set(desired_envval.keys()))
 
-    except ClientError as ex:
-        module.fail_json(msg=ex.response['Error']['Message'])
+    if revoke_envval != 0:
+        options_to_remove = [
+            {
+                "Namespace": "aws:elasticbeanstalk:application:environment",
+                "OptionName": x
+            }
+            for x in revoke_envval
+        ]
 
     # Update
     try:
         res = conn.update_environment(
             ApplicationName=application,
             EnvironmentName=environment,
-            OptionSettings=option_settings
+            OptionSettings=option_settings,
+            OptionsToRemove=options_to_remove
         )
 
     except ClientError as ex:
