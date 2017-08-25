@@ -49,6 +49,10 @@ def main():
     environment = module.params['environment']
     desired_envval = module.params['envval']
 
+    for v in desired_envval.values():
+        if not isinstance(v, str):
+            module.fail_json(msg="envval dict must be string")
+
     if not HAS_BOTO3:
         module.fail_json(msg='boto3 required for this module')
     if not HAS_BOTOCORE:
