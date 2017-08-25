@@ -8,12 +8,34 @@ short_description: Control Elastic Beanstalks environment variables
 description:
     - Control Elastic Beanstalks environment variables
 options:
+  application:
+    description: Application name
+    required: true
+  environment:
+    description: Enviromnent name
+    required: true
+  envval:
+    description: Envronment variable key and value
+    required: true
 author:
     - "Ryo Manzoku (@rmanzoku)"
 extends_documentation_fragment: aws
 '''
 
 EXAMPLES = '''
+tasks:
+  - name: Set environment values
+    eb_envval:
+      application: example
+      environment: example-production
+      envval:
+        BUNDLE_WITHOUT: "test:development"
+        PASSENGER_MAX_POOL_SIZE: "2"
+        PASSENGER_MIN_INSTANCES: "10"
+        RACK_ENV: "production"
+        RAILS_ENV: "production"
+        RAILS_SKIP_ASSET_COMPILATION: "true"
+        RAILS_SKIP_MIGRATIONS: "true"
 '''
 
 try:
