@@ -1,0 +1,16 @@
+- hosts:
+    localhost
+  connection: local
+  tasks:
+    - name: Update
+      eb_envval:
+        application: steak-api
+        environment: steak-api-sand-v2
+        envval:
+          BUNDLE_WITHOUT: "test:development"
+          PASSENGER_MAX_POOL_SIZE: "2"
+          PASSENGER_MIN_INSTANCES: "2"
+          RACK_ENV: "development_tokyo"
+          RAILS_ENV: "development_tokyo"
+          RAILS_SKIP_ASSET_COMPILATION: "true"
+          RAILS_SKIP_MIGRATIONS: "true"
